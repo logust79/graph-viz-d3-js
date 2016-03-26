@@ -95,8 +95,6 @@ require(["renderer"],
 			$('#copy-button').on('click', function(){
 				$('#copy-div').html(renderer.getImage({reset:true, zoomFunc:zoomFunc}));
 			});
-			//check_element = $('#graph > svg > g > g');
-			//check_load(check_element, callback);
 		});	  
 });
 //Hide the tooltip when the mouse moves away
@@ -158,7 +156,6 @@ callback = function (){
 		.on('mouseover', showTooltip)
 		.on('mouseout', removeTooltip);
 	$('.node').on('click',function() {
-		// get the HPO id
 		var this_node = $(this);
 		var id = this_node.children().last().html();
 		window.location.href = "http://localhost:3000/" + id;
@@ -172,7 +169,6 @@ var myLabelAttributer = function() {
 		})
 		.attr('y', function(d,i){
 				var pData = d3.select(this.parentNode).datum().labels;
-				//console.log(pData.length);
 				return -d.y - 7*(i - pData.length/2 + 1);
 		})
 		.text(function (d) {
