@@ -1,6 +1,6 @@
 define(["stage", "worker!layout-worker.js"], function(stage, worker) {
 
-  var initialized = false, pending, callback;
+  var initialized = false, pending, callback, myCallback, myLabelAttributer;;
 
   worker.onmessage = function (event) {
     switch (event.data.type) {
@@ -11,7 +11,10 @@ define(["stage", "worker!layout-worker.js"], function(stage, worker) {
         }
         break;
       case "stage":
-        stage.draw(event.data.body);
+        stage.draw({stage: event.data.body, 
+        	labelAttributer: myLabelAttributer, 
+        	callBack: myCallback
+        });
         break;
       case "error":
         if (callback) {
@@ -24,11 +27,19 @@ define(["stage", "worker!layout-worker.js"], function(stage, worker) {
     init: function(element) {
       return stage.init(element);
     },
-    render: function(source) {
-      if (initialized) {
-        worker.postMessage(source);
+    render: function(obj) {
+      var intialized = false, myS, myC, myA;
+      if (typeof(obj) == 'object'){
+      	myS = obj.source, myC = obj.callBack, myA = obj.labelAttributer;
       } else {
-        pending = source;
+      	myS = obj;
+      }
+      if (initialized) {
+        worker.postMessage(myS);
+      } else {
+        pending = myS;
+        myCallback = myC;
+        myLabelAttributer = myA;
       }
     },
     getImage: function(obj) {

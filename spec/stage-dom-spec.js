@@ -25,20 +25,33 @@ define(["stage", 'spec/shapes/graph-label', 'spec/shapes/courier-fonts'
         fixture);
 
       stage.transitions(immediate);
-      stage.init("#graph");
     });
 
     afterEach(function() {
       document.body.removeChild(document.getElementById('graph'));
     });
-
+	
+	it("should return a zoom behaviour", function () {
+		function functionName(fun) {
+		  var ret = fun.toString();
+		  ret = ret.substr('function '.length);
+		  ret = ret.substr(0, ret.indexOf('('));
+		  return ret;
+		}
+		var element = "#graph";
+		var result = stage.init({element:element, extend:[0.1, 10]});
+		expect(functionName(result)).toEqual('zoom');
+	});
+	
     it("should contain label", function() {
+      stage.init("#graph");
       stage.draw(graphLabelShapes);
 
       expect(document.querySelector("#graph svg > g > g > text").textContent).toEqual("Graph");
     });
 
     it("should render non default fonts properly", function() {
+      stage.init("#graph");
       stage.draw(courierFontsShapes);
       expect(document.querySelector('#graph svg text[style*="Courier"]').textContent).toEqual("Courier");
       expect(document.querySelector('#graph svg text[style*="Courier-Bold"]').textContent).toEqual("Courier-Bold");

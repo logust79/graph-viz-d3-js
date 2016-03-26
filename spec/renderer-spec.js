@@ -48,7 +48,7 @@ define(["rfactory!renderer"], function(rendererFactory) {
           body: {}
         }
       });
-      expect(stageSpy.draw).toHaveBeenCalledWith({});
+      expect(stageSpy.draw).toHaveBeenCalledWith({ stage : {  }, labelAttributer : undefined, callBack : undefined });
     });
 
     it("should return error when rendering failed", function() {

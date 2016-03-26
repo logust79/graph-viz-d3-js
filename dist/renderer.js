@@ -184,6 +184,9 @@ define('stage',["d3", "palette", "transitions/default"], function (d3, palette, 
 			svg.append("polygon").attr("stroke", "none");
 			main = svg.append("g").append("g");
         } else if (typeof(element) == 'object'){
+        	function zoomed(){
+				main.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+			}
         	var zoom = d3.behavior.zoom()
 				.scaleExtent(element.extent)
 				.on("zoom", zoomed);
@@ -201,9 +204,6 @@ define('stage',["d3", "palette", "transitions/default"], function (d3, palette, 
 			element.extent = element.extent || [0.1, 10]
 			svg.select("g")
 			  .call(zoom);
-			function zoomed(){
-				main.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
-			}
 			return zoom;
         }
       },
@@ -225,7 +225,15 @@ define('stage',["d3", "palette", "transitions/default"], function (d3, palette, 
           return transitions;
         }
       },
-      draw: function (stage) {
+      draw: function (obj) {
+      	var stage;
+      	if (obj.stage){
+			var stage = obj.stage;
+			labelAttributer = obj.labelAttributer || labelAttributer;
+			var myCallback = obj.callBack;
+      	} else {
+      		stage = obj;
+      	}
         var sizes = calculateSizes(stage.main);
         var area = [0, 0, sizes.width, sizes.height];
 
@@ -319,6 +327,9 @@ define('stage',["d3", "palette", "transitions/default"], function (d3, palette, 
         });
         labels.enter().append("text");
         transitions.labels(labels, labelAttributer);
+        if(myCallback){
+        	myCallback();
+        }
       }
     };
   }
@@ -348,7 +359,7 @@ define('worker',[],function () {
 
 define('renderer',["stage", "worker!layout-worker.js"], function(stage, worker) {
 
-  var initialized = false, pending, callback;
+  var initialized = false, pending, callback, myCallback, myLabelAttributer;;
 
   worker.onmessage = function (event) {
     switch (event.data.type) {
@@ -359,7 +370,10 @@ define('renderer',["stage", "worker!layout-worker.js"], function(stage, worker) 
         }
         break;
       case "stage":
-        stage.draw(event.data.body);
+        stage.draw({stage: event.data.body, 
+        	labelAttributer: myLabelAttributer, 
+        	callBack: myCallback
+        });
         break;
       case "error":
         if (callback) {
@@ -372,11 +386,19 @@ define('renderer',["stage", "worker!layout-worker.js"], function(stage, worker) 
     init: function(element) {
       return stage.init(element);
     },
-    render: function(source) {
-      if (initialized) {
-        worker.postMessage(source);
+    render: function(obj) {
+      var intialized = false, myS, myC, myA;
+      if (typeof(obj) == 'object'){
+      	myS = obj.source, myC = obj.callBack, myA = obj.labelAttributer;
       } else {
-        pending = source;
+      	myS = obj;
+      }
+      if (initialized) {
+        worker.postMessage(myS);
+      } else {
+        pending = myS;
+        myCallback = myC;
+        myLabelAttributer = myA;
       }
     },
     getImage: function(obj) {

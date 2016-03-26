@@ -74,6 +74,9 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
 			svg.append("polygon").attr("stroke", "none");
 			main = svg.append("g").append("g");
         } else if (typeof(element) == 'object'){
+        	function zoomed(){
+				main.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
+			}
         	var zoom = d3.behavior.zoom()
 				.scaleExtent(element.extent)
 				.on("zoom", zoomed);
@@ -91,9 +94,6 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
 			element.extent = element.extent || [0.1, 10]
 			svg.select("g")
 			  .call(zoom);
-			function zoomed(){
-				main.attr('transform', 'translate(' + d3.event.translate + ')scale(' + d3.event.scale + ')');
-			}
 			return zoom;
         }
       },
@@ -115,7 +115,15 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
           return transitions;
         }
       },
-      draw: function (stage) {
+      draw: function (obj) {
+      	var stage;
+      	if (obj.stage){
+			var stage = obj.stage;
+			labelAttributer = obj.labelAttributer || labelAttributer;
+			var myCallback = obj.callBack;
+      	} else {
+      		stage = obj;
+      	}
         var sizes = calculateSizes(stage.main);
         var area = [0, 0, sizes.width, sizes.height];
 
@@ -209,6 +217,9 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
         });
         labels.enter().append("text");
         transitions.labels(labels, labelAttributer);
+        if(myCallback){
+        	myCallback();
+        }
       }
     };
   }
