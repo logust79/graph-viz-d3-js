@@ -218,7 +218,7 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
         labels.enter().append("text");
         transitions.labels(labels, labelAttributer);
         if(myCallback){
-        	myCallback();
+        	myCallback(svg);
         }
       }
     };

@@ -147,8 +147,7 @@ function showTooltip(d) {
 }//function showTooltip
 
 // shrink the texts, and add a tooltip
-callback = function (){
-	svg = d3.select('#graph').select('svg');
+callback = function (svg){
 	all_g = svg.select('g').select('g').selectAll('g.node');
 	all_g.selectAll('text')
 		.style('font-size', '7px');

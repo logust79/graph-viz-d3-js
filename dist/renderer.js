@@ -328,7 +328,7 @@ define('stage',["d3", "palette", "transitions/default"], function (d3, palette, 
         labels.enter().append("text");
         transitions.labels(labels, labelAttributer);
         if(myCallback){
-        	myCallback();
+        	myCallback(svg);
         }
       }
     };
