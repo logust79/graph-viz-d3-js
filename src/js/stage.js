@@ -3,8 +3,8 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
     var order = {
       digraph: 0,
       subgraph: 1,
-      node: 2,
-      relation: 3
+      node: 3,
+      relation: 2
     };
     var transitions = defaults;
 
@@ -189,8 +189,7 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
         });
 
         groups.sort(function (a, b) {
-        //nodes draw after relations, 
-          return order[b.class] - order[a.class];
+          return order[a.class] - order[b.class];
         });
 
         var shapes = groups.selectAll("path").data(function (d) {
