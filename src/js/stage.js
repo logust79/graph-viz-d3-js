@@ -189,7 +189,8 @@ define(["d3", "palette", "transitions/default"], function (d3, palette, defaults
         });
 
         groups.sort(function (a, b) {
-          return order[a.class] - order[b.class];
+        //nodes draw after relations, 
+          return order[b.class] - order[a.class];
         });
 
         var shapes = groups.selectAll("path").data(function (d) {
